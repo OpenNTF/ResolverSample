@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin id="com.ibm.portal.samples.resolver.portlet" name="ResolverSamplePortlet Plugin"
+	version="1.0.0" provider-name="IBM">
+
+	<!-- our portlet resolver -->
+	<extension point="com.ibm.content.operations.registry.locationServiceHandler">
+		<!-- The class attribute references the implementation class. The location type
+		attaches this handler to portlet resolution and must always be that value. The id uniquely
+		identifies this handler and is referenced in the portlet.xml -->
+		<serviceHandler
+			class="com.ibm.portal.samples.resolver.ResolverRenderEventListener"
+			locationTypeId="com.ibm.portal.resolver.portlet" id="com.ibm.portal.samples.resolver.portlet.id" />
+	</extension>
+
+</plugin>

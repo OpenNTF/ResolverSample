@@ -1,0 +1,77 @@
+<!-- 1 [content-node Z6_000000000000000000000000A0] -->
+<!-- 2 [content-node Z6_00000000000000A0BR2B300GO2] -->
+<!-- 3 [content-node Z6_0226G441LG6540AUD2MOSH2007] -->
+<!-- 4 [component Z7_0226G441LG6540AUD2MOSH20G0] -->
+<!-- 5 [component Z7_0226G441LG6540AUD2MOSH20G4] -->
+<!-- 6 [component Z7_0226G441LG6540AUD2MOSH2081] -->
+<!-- 7 [web-app Z1_0226G441LG6540AUD2MOSH20G5 uid=com.ibm.portal.samples.resolver.samples.portlet.client.webmod] -->
+<!-- 8 [portlet-app Z2_0226G441LG6540AUD2MOSH20G3 name=com.ibm.portal.samples.resolver.samples.portlet.client 
+	uid=com.ibm.portal.samples.resolver.samples.portlet.client] -->
+<!-- 9 [servlet ZV_0226G441LG6540AUD2MOSH20G7] -->
+<!-- 10 [portlet Z3_0226G441LG6540AUD2MOSH2080 name=ResolverClientPortlet] -->
+<!-- 11 [portletinstance Z5_0226G441LG6540AUD2MOSH2085] -->
+<request build="20150908-2132" type="update" version="8.5.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="PortalConfig_8.5.0.xsd">
+	<portal action="locate">
+		<web-app action="locate" domain="rel"
+			objectid="Z1_0226G441LG6540AUD2MOSH20G5"
+			uid="com.ibm.portal.samples.resolver.samples.portlet.client.webmod">
+			<servlet action="locate" domain="rel" name="ResolverClientPortlet"
+				objectid="ZV_0226G441LG6540AUD2MOSH20G7" />
+			<portlet-app action="locate" domain="rel"
+				name="com.ibm.portal.samples.resolver.samples.portlet.client"
+				objectid="Z2_0226G441LG6540AUD2MOSH20G3" uid="com.ibm.portal.samples.resolver.samples.portlet.client">
+				<portlet action="locate" domain="rel" name="ResolverClientPortlet"
+					objectid="Z3_0226G441LG6540AUD2MOSH2080" />
+			</portlet-app>
+		</web-app>
+		<content-node action="locate" domain="rel"
+			objectid="Z6_00000000000000A0BR2B300GO2" uniquename="ibm.portal.Home" />
+		<content-node action="update" active="true"
+			allportletsallowed="true" content-parentref="Z6_00000000000000A0BR2B300GO2"
+			create-type="explicit" domain="rel" objectid="Z6_0226G441LG6540AUD2MOSH2007"
+			ordinal="196808" themeref="undefined" type="page">
+			<supported-markup markup="html" update="set" />
+			<localedata locale="en">
+				<title>ResolverSampleClient</title>
+			</localedata>
+			<parameter name="com.ibm.portal.IgnoreAccessControlInCaches"
+				type="string" update="set"><![CDATA[false]]></parameter>
+			<parameter name="com.ibm.portal.bookmarkable" type="string"
+				update="set"><![CDATA[true]]></parameter>
+			<parameter name="com.ibm.portal.feed.remote-cache-expiry"
+				type="string" update="set"><![CDATA[86400]]></parameter>
+			<parameter name="com.ibm.portal.remote-cache-expiry" type="string"
+				update="set"><![CDATA[86400]]></parameter>
+			<parameter name="com.ibm.portal.remote-cache-scope" type="string"
+				update="set"><![CDATA[NON-SHARED]]></parameter>
+			<parameter
+				name="param.sharing.scope.{http://www.ibm.com/xmlns/prod/datatype/content/resource-collections}"
+				type="string" update="set"><![CDATA[ibm.portal.sharing.scope.page]]></parameter>
+			<parameter
+				name="param.sharing.scope.{http://www.ibm.com/xmlns/prod/datatype/content}"
+				type="string" update="set"><![CDATA[ibm.portal.sharing.scope.page]]></parameter>
+			<parameter
+				name="param.sharing.scope.{http://www.ibm.com/xmlns/prod/websphere/portal/publicparams}path-info"
+				type="string" update="set"><![CDATA[ibm.portal.sharing.scope.page]]></parameter>
+			<component action="update" active="true" deletable="undefined"
+				domain="rel" modifiable="undefined" objectid="Z7_0226G441LG6540AUD2MOSH20G0"
+				ordinal="65536" orientation="H" skinref="undefined" type="container"
+				width="undefined">
+				<component action="update" active="true" deletable="undefined"
+					domain="rel" modifiable="undefined" objectid="Z7_0226G441LG6540AUD2MOSH20G4"
+					ordinal="65536" orientation="V" skinref="undefined" type="container"
+					width="undefined">
+					<component action="update" active="true" deletable="undefined"
+						domain="rel" modifiable="undefined" objectid="Z7_0226G441LG6540AUD2MOSH2081"
+						ordinal="65536" skinref="undefined" type="control" width="undefined">
+						<portletinstance action="update" domain="rel"
+							objectid="Z5_0226G441LG6540AUD2MOSH2085" portletref="Z3_0226G441LG6540AUD2MOSH2080" />
+					</component>
+				</component>
+			</component>
+		</content-node>
+	</portal>
+	<status element="all" result="ok" />
+</request>

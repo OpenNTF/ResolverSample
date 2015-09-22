@@ -1,0 +1,34 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>ResolverSampleApi</artifactId>
+	<packaging>jar</packaging>
+
+	<name>Resolver Sample Api</name>
+
+	<parent>
+		<groupId>com.ibm.portal.samples</groupId>
+		<artifactId>ResolverSamples</artifactId>
+		<version>1.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<!-- most dependencies are inherited, just list the project specific ones -->
+	<dependencies>
+
+		<dependency>
+			<groupId>com.ibm.icu</groupId>
+			<artifactId>icu4j</artifactId>
+			<version>${version.com.ibm.icu.icu4j}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ibm.portal</groupId>
+			<artifactId>spi</artifactId>
+			<version>${version.com.ibm.portal.spi}</version>
+			<scope>provided</scope>
+		</dependency>
+
+	</dependencies>
+
+</project>

@@ -1,0 +1,210 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>ResolverSamplePAA</artifactId>
+	<packaging>pom</packaging>
+
+	<name>Resolver Sample PAA</name>
+	<description>This project builds the PAA from all involved components.</description>
+
+	<parent>
+		<groupId>com.ibm.portal.samples</groupId>
+		<artifactId>ResolverSamples</artifactId>
+		<version>1.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<!-- most dependencies are inherited, just list the project specific ones -->
+	<dependencies>
+
+		<dependency>
+			<groupId>com.ibm.portal.samples</groupId>
+			<artifactId>ResolverSampleClientPortletPCA</artifactId>
+			<version>${project.version}</version>
+			<classifier>pca</classifier>
+			<type>zip</type>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ibm.portal.samples</groupId>
+			<artifactId>ResolverSamplePortletPCA</artifactId>
+			<version>${project.version}</version>
+			<classifier>pca</classifier>
+			<type>zip</type>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ibm.portal.samples</groupId>
+			<artifactId>ResolverSampleResolverPCA</artifactId>
+			<version>${project.version}</version>
+			<classifier>pca</classifier>
+			<type>zip</type>
+		</dependency>
+
+
+		<dependency>
+			<groupId>com.ibm.portal.samples</groupId>
+			<artifactId>ResolverSamplePagesPCA</artifactId>
+			<version>${project.version}</version>
+			<classifier>pca</classifier>
+			<type>zip</type>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>${version.org.apache.maven.plugins.maven-dependency-plugin}</version>
+				<executions>
+					<!-- We dump the build order into a file. The output will be sorted 
+						topologically, so it matches the order in which we have to install the components 
+						in the PAA. To create the sdd.xml file for the PAA we need to convert the 
+						textual description of the build order into an XML format. This is done in 
+						the following ant step. -->
+					<execution>
+						<id>build-order</id>
+						<phase>package</phase>
+						<goals>
+							<goal>list</goal>
+						</goals>
+						<configuration>
+							<includeGroupIds>com.ibm.portal.samples</includeGroupIds>
+							<classifier>pca</classifier>
+							<outputFile>${project.build.directory}/order.txt</outputFile>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>${version.org.apache.maven.plugins.maven-antrun-plugin}</version>
+				<executions>
+					<!-- Convert the textual description of the build order into an XML 
+						file. The regexp based approach is a little pedestrian, suggestions for a 
+						better solution are welcome. Note that the resulting XML file contains one 
+						empty dependency element because of simplicity reasons. This has to be filtered 
+						out by the XSLT. -->
+					<execution>
+						<id>build-order-xml</id>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<property name="tmp.dependencies" location="${project.build.directory}/order.txt" />
+								<replaceregexp match="\s{3}([^:]*):([^:]*):([^:]*):(.*)|^(.*):$"
+									replace="&lt;!-- \4 --&gt;&lt;dependency groupId=&quot;\1&quot; artifactId=&quot;\2&quot; type=&quot;\3&quot;/&gt;"
+									flags="g" byline="true" file="${tmp.dependencies}" />
+								<loadfile property="tmp.order.content" srcFile="${tmp.dependencies}" />
+								<echo file="${tmp.dependencies}">
+									&lt;dependencies&gt;${tmp.order.content}&lt;/dependencies&gt; </echo>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>xml-maven-plugin</artifactId>
+				<version>${version.org.codehaus.mojo.xml-maven-plugin}</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>transform</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<transformationSets>
+						<!-- construct the sdd -->
+						<transformationSet>
+							<dir>${basedir}/src/main/xml</dir>
+							<stylesheet>${basedir}/src/main/xslt/paa.xslt</stylesheet>
+							<outputDir>${project.build.directory}/${project.build.finalName}</outputDir>
+							<parameters>
+								<parameter>
+									<name>ARTIFACT_ID</name>
+									<value>${project.artifactId}</value>
+								</parameter>
+								<parameter>
+									<name>GROUP_ID</name>
+									<value>${project.groupId}</value>
+								</parameter>
+								<parameter>
+									<name>VERSION</name>
+									<value>${project.version}</value>
+								</parameter>
+								<parameter>
+									<name>BUILD_DATE</name>
+									<value>${maven.build.timestamp}</value>
+								</parameter>
+								<parameter>
+									<name>DEPENDENCIES</name>
+									<value>../../../target/order.txt</value>
+								</parameter>
+							</parameters>
+						</transformationSet>
+
+						<!-- construct the dependencies -->
+						<transformationSet>
+							<dir>${build.directory}</dir>
+							<includes>
+								<include>order.txt</include>
+							</includes>
+							<stylesheet>${basedir}/src/main/xslt/order.xslt</stylesheet>
+							<outputDir>${project.build.directory}/${project.build.finalName}/components</outputDir>
+							<fileMappers>
+								<fileMapper
+									implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
+									<targetExtension>.properties</targetExtension>
+								</fileMapper>
+							</fileMappers>
+						</transformationSet>
+
+					</transformationSets>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.github.fracpete</groupId>
+				<artifactId>latex-maven-plugin</artifactId>
+				<version>1.4.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>latex</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>${version.org.apache.maven.plugins.maven-assembly-plugin}</version>
+				<configuration>
+					<descriptors>
+						<descriptor>${basedir}/src/main/assembly/paa.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- bind to the packaging phase -->
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+</project>

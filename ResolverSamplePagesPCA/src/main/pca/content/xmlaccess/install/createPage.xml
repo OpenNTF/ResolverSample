@@ -1,0 +1,84 @@
+<!-- 1 [skin ZK_00000000000000A0BR2B300670] -->
+<!-- 2 [skin ZK_00000000000000A0BR2B300672] -->
+<!-- 3 [skin ZK_00000000000000A0BR2B300674] -->
+<!-- 4 [skin ZK_00000000000000A0BR2B300676] -->
+<!-- 5 [theme ZJ_00000000000000A0BR2B300QC6] -->
+<!-- 6 [content-node Z6_000000000000000000000000A0] -->
+<!-- 7 [content-node Z6_00000000000000A0BR2B300G80] -->
+<!-- 8 [content-node Z6_00000000000000A8AKHN653000] -->
+<!-- 9 [content-node Z6_1814I341LGR870AUDSA0KL2007] -->
+<!-- 10 [component Z7_1814I341LGR870AUDSA0KL20G0] -->
+<!-- 11 [component Z7_1814I341LGR870AUDSA0KL20G4] -->
+<!-- 12 [component Z7_1814I341LGR870AUDSA0KL20G5] -->
+<!-- 13 [web-app Z1_1814I341LGR870AUDSA0KL2000 uid=com.ibm.portal.samples.resolver.samples.portlet.webmod] -->
+<!-- 14 [portlet-app Z2_1814I341LGR870AUDSA0KL2004 name=com.ibm.portal.samples.resolver.samples.portlet 
+	uid=com.ibm.portal.samples.resolver.samples.portlet] -->
+<!-- 15 [servlet ZV_1814I341LGR870AUDSA0KL2002] -->
+<!-- 16 [portlet Z3_1814I341LGR870AUDSA0KL2006 name=ResolverPortlet] -->
+<!-- 17 [portletinstance Z5_1814I341LGR870AUDSA0KL20G3] -->
+<request build="20150907-1702" type="update" version="8.5.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="PortalConfig_8.5.0.xsd">
+	<portal action="locate">
+		<web-app action="locate" domain="rel"
+			objectid="Z1_1814I341LGR870AUDSA0KL2000" uid="com.ibm.portal.samples.resolver.samples.portlet.webmod">
+			<servlet action="locate" domain="rel" name="ResolverPortlet"
+				objectid="ZV_1814I341LGR870AUDSA0KL2002" />
+			<portlet-app action="locate" domain="rel"
+				name="com.ibm.portal.samples.resolver.samples.portlet" objectid="Z2_1814I341LGR870AUDSA0KL2004"
+				uid="com.ibm.portal.samples.resolver.samples.portlet">
+				<portlet action="locate" domain="rel" name="ResolverPortlet"
+					objectid="Z3_1814I341LGR870AUDSA0KL2006"
+					uniquename="com.ibm.portal.samples-ResolverSamplePortletPCA.ResolverPortlet" />
+			</portlet-app>
+		</web-app>
+		<content-node action="locate" domain="rel"
+			objectid="Z6_00000000000000A8AKHN653000" uniquename="ibm.portal.dialog.root" />
+		<content-node action="update" active="true"
+			allportletsallowed="true" content-parentref="Z6_00000000000000A8AKHN653000"
+			create-type="explicit" domain="rel" objectid="Z6_1814I341LGR870AUDSA0KL2007"
+			ordinal="69536" themeref="undefined" type="page"
+			uniquename="ResolverSampleResolver.page">
+			<supported-markup markup="html" update="set" />
+			<localedata locale="en">
+				<title>ResolverSamplePage</title>
+			</localedata>
+			<parameter name="com.ibm.portal.IgnoreAccessControlInCaches"
+				type="string" update="set"><![CDATA[false]]></parameter>
+			<parameter name="com.ibm.portal.bookmarkable" type="string"
+				update="set"><![CDATA[true]]></parameter>
+			<parameter name="com.ibm.portal.feed.remote-cache-expiry"
+				type="string" update="set"><![CDATA[86400]]></parameter>
+			<parameter name="com.ibm.portal.remote-cache-expiry" type="string"
+				update="set"><![CDATA[86400]]></parameter>
+			<parameter name="com.ibm.portal.remote-cache-scope" type="string"
+				update="set"><![CDATA[NON-SHARED]]></parameter>
+			<parameter
+				name="param.sharing.scope.{http://www.ibm.com/xmlns/prod/datatype/content/resource-collections}"
+				type="string" update="set"><![CDATA[ibm.portal.sharing.scope.page]]></parameter>
+			<parameter
+				name="param.sharing.scope.{http://www.ibm.com/xmlns/prod/datatype/content}"
+				type="string" update="set"><![CDATA[ibm.portal.sharing.scope.page]]></parameter>
+			<parameter
+				name="param.sharing.scope.{http://www.ibm.com/xmlns/prod/websphere/portal/publicparams}path-info"
+				type="string" update="set"><![CDATA[ibm.portal.sharing.scope.page]]></parameter>
+			<component action="update" active="true" deletable="undefined"
+				domain="rel" modifiable="undefined" objectid="Z7_1814I341LGR870AUDSA0KL20G0"
+				ordinal="65536" orientation="H" skinref="undefined" type="container"
+				width="undefined">
+				<component action="update" active="true" deletable="undefined"
+					domain="rel" modifiable="undefined" objectid="Z7_1814I341LGR870AUDSA0KL20G4"
+					ordinal="65536" orientation="V" skinref="undefined" type="container"
+					width="undefined">
+					<component action="update" active="true" deletable="undefined"
+						domain="rel" modifiable="undefined" objectid="Z7_1814I341LGR870AUDSA0KL20G5"
+						ordinal="65536" skinref="undefined" type="control" width="undefined">
+						<portletinstance action="update" domain="rel"
+							objectid="Z5_1814I341LGR870AUDSA0KL20G3" portletref="Z3_1814I341LGR870AUDSA0KL2006" />
+					</component>
+				</component>
+			</component>
+		</content-node>
+	</portal>
+	<status element="all" result="ok" />
+</request>

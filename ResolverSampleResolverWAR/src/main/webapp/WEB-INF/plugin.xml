@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin id="com.ibm.portal.samples.resolver.resolver" name="ResolverSampleResolver Plugin"
+	version="1.0.0" provider-name="IBM">
+
+	<extension
+		point="com.ibm.content.operations.registry.locationTypeContribution">
+		<!-- Registers a URI scheme with an identifier for the underlying concept via the id attribute. This
+		identifier is the referenced in the service handler below via the locationTypeId attribute. -->
+		<contentLocationType
+			class="com.ibm.portal.resolver.helper.cor.DefaultContentLocationFactory"
+			id="com.ibm.wps.samples.resolver.resolver" match.uri.scheme="RESOLVER.SAMPLE.SCHEME"
+			title="portlet content location" />
+
+	</extension>
+
+	<extension point="com.ibm.content.operations.registry.locationServiceHandler">
+
+		<!-- The service handler identifies the implementatin of the resolver. The id attribute
+		tells the system that this is a Resolution service. The locationTypeId attribute ties
+		the handler to the desired URI scheme. The class attribute identifies the implementation class. -->
+		<serviceHandler
+			class="com.ibm.portal.samples.resolver.resolver.ResolverSampleResolverProxy"
+			locationTypeId="com.ibm.wps.samples.resolver.resolver" id="com.ibm.portal.resolver.ResolutionService" />
+
+	</extension>
+
+
+</plugin>

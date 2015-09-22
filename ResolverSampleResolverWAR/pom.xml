@@ -1,0 +1,102 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>ResolverSampleResolverWAR</artifactId>
+	<packaging>war</packaging>
+
+	<name>Resolver Sample Resolver WAR</name>
+	<description>This project builds a WAR file that contains the main resolver. The only
+	reason to make this a WAR file is that then we can deploy it without a server restart. It would
+	have been equally valid to add the main resolver to the shared-app classpath and to restart the server.</description>
+
+	<parent>
+		<groupId>com.ibm.portal.samples</groupId>
+		<artifactId>ResolverSamples</artifactId>
+		<version>1.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<!-- most dependencies are inherited, just list the project specific ones -->
+	<dependencies>
+
+		<dependency>
+			<groupId>com.ibm.portal.samples</groupId>
+			<artifactId>ResolverSampleApi</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.core</groupId>
+			<artifactId>runtime</artifactId>
+			<version>${version.org.eclipse.core.runtime}</version>
+			<scope>provided</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>xml-maven-plugin</artifactId>
+				<version>${version.org.codehaus.mojo.xml-maven-plugin}</version>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>transform</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<transformationSets>
+
+						<transformationSet>
+							<dir>${basedir}/src/main/xml/pca</dir>
+							<stylesheet>${basedir}/src/main/xslt/pca.xslt</stylesheet>
+							<outputDir>${project.build.directory}/${project.build.finalName}-pca</outputDir>
+							<parameters>
+								<parameter>
+									<name>GROUP_ID</name>
+									<value>${project.groupId}</value>
+								</parameter>
+								<parameter>
+									<name>ARTIFACT_ID</name>
+									<value>${project.artifactId}</value>
+								</parameter>
+								<parameter>
+									<name>VERSION</name>
+									<value>${project.version}</value>
+								</parameter>
+								<parameter>
+									<name>BUILD_DATE</name>
+									<value>${maven.build.timestamp}</value>
+								</parameter>
+							</parameters>
+						</transformationSet>
+
+					</transformationSets>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>${version.org.apache.maven.plugins.maven-assembly-plugin}</version>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/component.xml</descriptor>
+					</descriptors>
+					<attach>true</attach>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- bind to the packaging phase -->
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

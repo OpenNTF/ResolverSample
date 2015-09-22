@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>ResolverSampleResolverEAR</artifactId>
+	<packaging>ear</packaging>
+
+	<name>Resolver Sample Resolver EAR</name>
+	<description>This project wraps the resolver WAR into an EAR since we can only install WAR files
+	via a PAA.</description>
+
+	<parent>
+		<groupId>com.ibm.portal.samples</groupId>
+		<artifactId>ResolverSamples</artifactId>
+		<version>1.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.ibm.portal.samples</groupId>
+			<artifactId>ResolverSampleResolverWAR</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-ear-plugin</artifactId>
+				<version>${version.org.apache.maven.plugins.maven-ear-plugin}</version>
+			</plugin>
+
+		</plugins>
+	</build>
+</project>

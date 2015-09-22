@@ -1,0 +1,304 @@
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% This is a simple template for a LaTeX document using the "article" class.
+% See "book", "report", "letter" for other types of document.
+
+\documentclass{article} % use larger type; default would be 10pt
+
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+\usepackage{hyperref}
+\usepackage{listings}
+
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+%%% PAGE DIMENSIONS
+\usepackage{geometry} % to change the page dimensions
+\geometry{a4paper} % or letterpaper (US) or a5paper or....
+% \geometry{margin=2in} % for example, change the margins to 2 inches all round
+% \geometry{landscape} % set up the page for landscape
+%   read geometry.pdf for detailed page layout information
+
+\usepackage{graphicx} % support the \includegraphics command and options
+
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+% These packages are all incorporated in the memoir class to one degree or another...
+
+%%% HEADERS & FOOTERS
+\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+\pagestyle{fancy} % options: empty , plain , fancy
+\renewcommand{\headrulewidth}{0pt} % customise the layout...
+\lhead{}\chead{}\rhead{}
+\lfoot{}\cfoot{\thepage}\rfoot{}
+
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+%%% END Article customizations
+
+%%% The "real" document content comes below...
+
+\title{Resolver Sample}
+\author{Dr. Carsten Leue  \\ email:
+\href{mailto:cleue@de.ibm.com}{cleue@de.ibm.com} }
+%\date{} % Activate to display a given date or no date (if empty),
+         % otherwise the current date is printed 
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+In this article we will discuss the concept and implementation of a {\tt
+ResolutionService} in WebSphere Portal. 
+
+\subsection{Navigational State}
+
+A portal site consists of a set of pages with portlets. The configuration of
+these pages is typically persisted in the portal database. At rendering time the
+rendering result depends on this persistent configuration, but also allows for
+dynamic aspects. We refer to this dynamic state as {\tt navigational state},
+since it controls on a per request basis the navigation behaviour of the site.
+The complete navigational state consists of the application state of portlet
+applications as well as of state targeted to the portal page, the theme or the
+rendering system. The system manages the state as part of the URL and dispatches
+the relevent subsets of the state to the different components at rendering time.
+Portlets manage their navigational state as public or private render parameters
+as defined in JSR286.
+Examples of navigational state include:
+\begin{itemize}
+\item the currently selected portal page
+\item an explicitly encoded locale that overrides the {\tt accept-language}
+header of the browser
+\item the private parameters for the portlets 
+\item public render parameters that can be shared across portlets
+\item \ldots 
+\end{itemize}
+
+\subsection{URL Handling}
+Navigational state is encoded in the portal URL. Since the total amount of state
+might be very large for a given site, the server applies several compression
+techniques to keep the state as small as possible. One of the consequences is
+that the URL is not legible directly for an end user. Instead URLs can only be
+generated and parsed via APIs.
+
+In a typical request, the incoming URL is first decoded by the system. The
+result is made available in form of a {\tt state object} attached to the
+request. At rendering time this state object is read-only, so all rendered
+components are guaranteed to render a consistent version of the state. 
+
+State can be changed by constructing URLs that encode the new state. This state
+becomes active as soon as the URL is invoked. These URLs have to be constructed
+using APIs, the format of the resulting URL is not under the control of the
+developer.
+
+\subsection{State Resolution}
+The construction of a URL can be tedious if the URL has to contain
+parameters for many different components. The client component constructing the
+URL has to know about the initialization details about all involved components
+in order to build a valid URL. Imagine a usecase for which there exist multiple
+portlets on a page that all have to be initialized with portlet specfic details
+on order to visualize a certain concept. A client would have to know about the
+existence of all of these portlets, the names and semantics of their render
+parameters, the hosting page and potentially also about other environment
+settings such as the display locale. This required knowledge tightly couples the
+URL generating client to the targeted application.
+
+The {\tt State Resolution} concept allows for a decoupling between client and
+application. We assume that there exists an abstract concept that identifies the
+desired application state. The client would only have to know about this
+concept, the realization of the concept in terms of application state can be an
+implementation detail of the application.
+
+\subsection{Resolution Service}
+We express the conceptual application state as an identifier that has
+syntactically to be in the format of a {\tt URI}. The scheme of the URI
+references the application, the scheme specific part a concrete instance of the
+application. Additional name-value pairs can in addition address arbitrary
+aspects.
+
+A client would consider a specific URI as the public interface to the
+application and there exist APIs to construct portal URLs that point to the
+navigational state addressed by the URI. The client does not have to know about
+any additional implementation details.
+
+The application can control how the URI is converted into navigational state.
+We call this the state resolution process. A typical resolution consists of:
+\begin{itemize}
+\item selection of a portal page that hosts the application
+\item initialization of contextual cross portlet state such as the locale
+\item initialization of the private and public render parameters for each
+portlet
+\end{itemize}
+
+\subsection{Components}
+A typical resolution process consists of serveral, loosely coupled compontents:
+\begin{description}
+\item[Client]\hfill \\
+The client uses portal APIs to construct a portal URL from the URI that targets
+a specific application instances. This allows a loose coupling between the
+client and the application.
+\item[Contextual Resolver]\hfill \\ 
+The resolver is coupled to the scheme part of the application URI. Its task is
+to convert the URI into navigational state that will then be used to render an
+application that visualizes the concept behind the URI. This resolution step is
+typically split into one component that initializes the contextual, cross
+portlet state and into portlet specific components. This makes sense, because
+the parameters required for the portlets are private implementation details of
+these portlets. Initializing these as part of a cross portlet resolver would
+disclose these implementation details to an external component and therefore
+create a tight coupling. 
+\item[Portlet Resolvers]\hfill \\ 
+The portlet specific resolvers initialize internal portlet state. They are
+invoked by the contextual resolver that dispatched the state resolution to the
+involved portlets after the cross component initialization has been done. Since
+portlet resolvers are tightly coupled with the portlets, they are typically
+shipped together with the portlets in one deployment artifact. 
+\end{description}
+
+\section{Implementation}
+In this section we will discuss the concepts used to implement a resolution
+chain. 
+
+One of the central goals of the resolution infrastructure is to allow for a
+loose coupling between the involved components and to make the system
+extensible without touching the underlying framework. This is achieved by using
+the Eclipse extension point mechanism to implement the involved components. The
+required extension points hook into the {\tt Content Operations Registry} which
+allows the Eclipse based registration of services with URI schemes. 
+
+\subsection{Contextual Resolver}
+The contextual resolver implements the {\tt ResolutionService} interface and it
+is registered directly with the URI scheme. Its input is a read-write
+representation of the current navigational state, a URI and a map of resolution
+parameters. The goal is to modify the read-write state.
+
+Implementations can use the following concepts to modify the state:
+\begin{description}
+\item[Directy Modification]\hfill \\
+Use the {\tt StateManagerService} APIs to modify contextual state. These APIs
+are poweful but low level and require a good understanding of the underlying
+navigational state document.
+\item[Delegation]\hfill \\
+Instead of directly modifying the state, a resolver can delegate to one or more
+already existing resolvers. These other resolvers would then initialize parts of
+the state, potentially by dispatching in turn.
+Use the {\tt PocServiceHome.getResolutionService()} method to access a resolver
+that dispatches to a given URI.
+\end{description}
+
+A special and very convenient resolver is the {\tt nm:oid:<PAGEID>:<POCURI>}
+resolver. Dispatching to this resolver will initialize the portal page selection
+to {\tt PAGEID} and will also dispatch the resolution to all portlets on that
+pages. These portlets will be passed the {\tt POCURI} for further resolution. We
+strongly advise to implement the page selection by dispatching to the {\tt nm}
+resolver. This is not only very convenient but will also make sure that the
+target portlets are initialized correctly.
+
+Contextual resolvers are typically packaged in their own deployable componenty,
+most often an EAR file. However the can also be deployed in the shared
+application class loader. We do not recomment to deploy the contextual resolver
+with the portlets, because this would introduce a coupling between logically
+decoupled components.
+
+\subsection{Portlet Resolver}
+In principle a portlet resolver also just implements the {\tt ResolutionService}
+interface, only that it is meant to initialize just that subset of the state
+that targets a particular portlet. For this special case the {\tt
+ResolutionService} interface is a little too generic and inconvenient to use.
+So it is possible to register a {\tt RenderEventListener} instead. This
+interface allow convenient access to the portlet concepts and makes the
+initialization of private and public render parameters, portlet mode and window
+state very convenient. Such a listener is coupled to a portlet via an
+initialization parameter in the portlet deployment descriptor. This parameter
+then references an Eclipse extension. Portlet resolvers are typically packaged
+with the portlet application in the portlet WAR file.
+
+\subsection{Optional API Component}
+The syntax of the URI and the set of resolution parameters form the public API
+between the client and the application. While it is sufficient to document this
+contract is can be convenient to offer a small API component that helps to build
+syntactically valid URIs. This component would also define the keys of
+resolution parameters as Java constants. This way both the client as well as the
+resolution implementation can reference this APIs component to make sure to use
+the same names without the risk of typos. Technically this API component can
+either be part of the shared application class loader or it might be packaged as
+a copy with each component. 
+
+\section{Sample}
+The resolution concepts are illustrated by the {\tt ResolverSample} example.
+This is a Maven project that builds all involved components and also generates
+the required deployment artifacts. The final output is a {\tt PAA} file that
+instantiates a portal page with a client portlet and a portal page with an
+application portlet. It also deploys and registers the required resolvers.
+
+The sample define a URI with the syntax {\tt
+RESOLVER.SAMPLE.SCHEME:<LOCALE>@<INFO>}. This allows to address a UI locale as
+well as transport an informational string to the target application. The
+resolution of this URI will select the application page, initialize the UI
+locale and initialize the application portlet such that the info string is
+displayed.
+
+The components are:
+\begin{description}
+\item[ResolverSampleApi]\hfill \\
+The API component that allows to generate and parse syntactically valid URIs. We
+package this component as a copy with every WAR and EAR file. 
+\item[ResolverSampleClientPortletWAR]\hfill \\
+Implementation of the client portlet that triggers the resolution. The portlet
+offers the selection of a locale and and info string. Upon submit it will
+construct a URI and trigger the resolution process.
+\item[ResolverSampleClientPortletPCA]\hfill \\
+Produces a package that installs the client WAR file and creates the client
+page. This package will be picked up by the PAA creation process.
+\item[ResolverSamplePortletWAR]\hfill \\
+Implementation of the application portlet and the matching portlet resolver.
+\item[ResolverSamplePortletPCA]\hfill \\
+Produces a package that installs the application WAR file.
+\item[ResolverSampleResolverWAR]\hfill \\
+Implementation of the contextual resolver that is bound to the {\tt
+RESOLVER.SAMPLE.SCHEME} in form of a WAR file.
+\item[ResolverSampleResolverEAR]\hfill \\
+Wraps the contextual resolver WAR file into an EAR file.
+\item[ResolverSampleResolverPCA]\hfill \\
+Produces a package that installs the contextual resolver EAR file.
+\item[ResolverSamplePagesPCA]\hfill \\
+Produces a package that installs the application page.
+\item[ResolverSamplePAA]\hfill \\
+Combines all PCA files into one single PAA file. This PAA file can then be
+deployed on WebSphere Portal.
+\item[ResolverSample]\hfill \\
+Parent project used to build the complete sample.
+\end{description}
+
+\subsection{Build}
+We use {\tt Apache Maven} as the build tool. Switch to the {\tt ResolverSample}
+project and call {\tt mvn clean package} to build the PAA.
+
+\subsection{Install}
+Switch to the config engine directory in your WebSphere Portal installatin and
+invoke the following command:
+ 
+\begin{lstlisting}[language=bash]
+./ConfigEngine.sh install-paa -DPAALocation=ResolverSamplePAA-1.0-paa.zip
+./ConfigEngine.sh deploy-paa -DappName=com.ibm.portal.samples-ResolverSamplePAA
+\end{lstlisting}
+
+\end{document}

@@ -1,0 +1,83 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>ResolverSampleClientPortletWAR</artifactId>
+	<packaging>war</packaging>
+
+	<name>Resolver Sample Client Portlet WAR</name>
+	<description>This project builds the WAR file of the client portlet for the resolver sample. This
+	portlet triggers the resolution process.</description>
+
+	<parent>
+		<groupId>com.ibm.portal.samples</groupId>
+		<artifactId>ResolverSamples</artifactId>
+		<version>1.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<!-- most dependencies are inherited, just list the project specific ones -->
+	<dependencies>
+
+		<dependency>
+			<groupId>com.ibm.portal.samples</groupId>
+			<artifactId>ResolverSampleApi</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ibm.icu</groupId>
+			<artifactId>icu4j</artifactId>
+			<version>${version.com.ibm.icu.icu4j}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>${version.javax.servlet.servlet-api}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>${version.javax.servlet.jsp.jsp-api}</version>
+			<scope>provided</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>xml-maven-plugin</artifactId>
+				<version>${version.org.codehaus.mojo.xml-maven-plugin}</version>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>transform</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<transformationSets>
+
+						<transformationSet>
+							<dir>${basedir}/src/main/xml/portlet</dir>
+							<stylesheet>${basedir}/src/main/xslt/portlet.xslt</stylesheet>
+							<outputDir>${project.build.directory}/${project.build.finalName}</outputDir>
+							<parameters>
+								<parameter>
+									<name>BASE_DIR</name>
+									<value>../java/com/ibm/portal/samples/</value>
+								</parameter>
+							</parameters>
+						</transformationSet>
+
+					</transformationSets>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

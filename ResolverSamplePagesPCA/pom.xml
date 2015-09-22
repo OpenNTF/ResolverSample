@@ -1,0 +1,109 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>ResolverSamplePagesPCA</artifactId>
+	<packaging>pom</packaging>
+
+	<name>Resolver Sample Pages PCA</name>
+	<description>This project builds a PAA component that installs the page that the viewer resides on. This
+	is a different component than the one that installs the WAR file, since in principle the WAR component
+	could be used by different applications on different pages.</description>
+
+	<parent>
+		<groupId>com.ibm.portal.samples</groupId>
+		<artifactId>ResolverSamples</artifactId>
+		<version>1.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<!-- most dependencies are inherited, just list the project specific ones -->
+	<dependencies>
+
+		<dependency>
+			<groupId>com.ibm.portal.samples</groupId>
+			<artifactId>ResolverSampleResolverPCA</artifactId>
+			<version>${project.version}</version>
+			<classifier>pca</classifier>
+			<type>zip</type>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ibm.portal.samples</groupId>
+			<artifactId>ResolverSamplePortletPCA</artifactId>
+			<version>${project.version}</version>
+			<classifier>pca</classifier>
+			<type>zip</type>
+			<scope>provided</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>xml-maven-plugin</artifactId>
+				<version>${version.org.codehaus.mojo.xml-maven-plugin}</version>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>transform</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<transformationSets>
+
+						<transformationSet>
+							<dir>${basedir}/src/main/xml/pca</dir>
+							<stylesheet>${basedir}/src/main/xslt/pca.xslt</stylesheet>
+							<outputDir>${project.build.directory}/${project.build.finalName}-pca</outputDir>
+							<parameters>
+								<parameter>
+									<name>GROUP_ID</name>
+									<value>${project.groupId}</value>
+								</parameter>
+								<parameter>
+									<name>ARTIFACT_ID</name>
+									<value>${project.artifactId}</value>
+								</parameter>
+								<parameter>
+									<name>VERSION</name>
+									<value>${project.version}</value>
+								</parameter>
+								<parameter>
+									<name>BUILD_DATE</name>
+									<value>${maven.build.timestamp}</value>
+								</parameter>
+							</parameters>
+						</transformationSet>
+
+					</transformationSets>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>${version.org.apache.maven.plugins.maven-assembly-plugin}</version>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/component.xml</descriptor>
+					</descriptors>
+					<attach>true</attach>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- bind to the packaging phase -->
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+</project>
