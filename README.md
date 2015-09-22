@@ -1,5 +1,23 @@
 # ResolverSample
-The sample will contain a java project that illustrates the use of the "resolver" API in WebSphere Portal.
+SETUP
+	
+	define "WpsInstallLocation" in your maven settings.xml. It should point to the WebSphere folder of the portal installation
+
+BUILD
+	
+	mvn clean package
+    
+INSTALL
+	
+	./ConfigEngine.sh install-paa -DPAALocation=ResolverSamplePAA-1.0-paa.zip
+	./ConfigEngine.sh deploy-paa -DappName=com.ibm.portal.samples-ResolverSamplePAA
+	
+UNINSTALL
+
+	./ConfigEngine.sh remove-paa -DappName=com.ibm.portal.samples-ResolverSamplePAA
+	./ConfigEngine.sh uninstall-paa -DappName=com.ibm.portal.samples-ResolverSamplePAA
+	./ConfigEngine.sh delete-paa -DappName=com.ibm.portal.samples-ResolverSamplePAA
+		
 
 ##OPENNTF##
 This project is an OpenNTF project, and is available under the Apache License
